@@ -24,8 +24,8 @@ def build_summarize_option_modal(*, context: BoltContext, body: dict) -> dict:
         openai_api_key=openai_api_key,
         context=context,
         text=(
-            "All replies posted in a Slack thread will be provided below. "
-            "Could you summarize the discussion in 200 characters or less?"
+            "Todas as respostas postadas em um thread do Slack serão fornecidas abaixo. "
+            "Você poderia resumir a discussão em 200 caracteres ou menos?"
         ),
     )
     thread_ts = body.get("message").get("thread_ts", body.get("message").get("ts"))
@@ -33,14 +33,14 @@ def build_summarize_option_modal(*, context: BoltContext, body: dict) -> dict:
         {
             "text": {
                 "type": "plain_text",
-                "text": "Here, on this modal",
+                "text": "Aqui, neste modal",
             },
             "value": "modal",
         },
         {
             "text": {
                 "type": "plain_text",
-                "text": "As a reply in the thread",
+                "text": "Como uma resposta na thread",
             },
             "value": "reply",
         },
@@ -48,7 +48,7 @@ def build_summarize_option_modal(*, context: BoltContext, body: dict) -> dict:
     is_error = False
     blocks = []
     try:
-        # Test if this bot is in the channel
+        # Teste se este bot está no canal
         context.client.conversations_replies(
             channel=context.channel_id,
             ts=thread_ts,
@@ -60,7 +60,7 @@ def build_summarize_option_modal(*, context: BoltContext, body: dict) -> dict:
                 "block_id": "where-to-share-summary",
                 "label": {
                     "type": "plain_text",
-                    "text": "How would you like to see the summary?",
+                    "text": "Como você gostaria de ver o resumo?",
                 },
                 "element": {
                     "action_id": "input",
@@ -80,7 +80,7 @@ def build_summarize_option_modal(*, context: BoltContext, body: dict) -> dict:
                 },
                 "label": {
                     "type": "plain_text",
-                    "text": "Customize the prompt as you prefer:",
+                    "text": "Customize o prompt como preferir:",
                 },
             },
             {
@@ -88,7 +88,7 @@ def build_summarize_option_modal(*, context: BoltContext, body: dict) -> dict:
                 "elements": [
                     {
                         "type": "mrkdwn",
-                        "text": "Note that after the instruction you provide, this app will append all the replies in the thread.",
+                        "text": "Observe que, após a instrução que você fornecer, este aplicativo adicionará todas as respostas na thread.",
                     }
                 ],
             },
@@ -102,9 +102,9 @@ def build_summarize_option_modal(*, context: BoltContext, body: dict) -> dict:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "It appears that this app's bot user is not a member of the specified channel. "
-                        f"Could you please invite <@{context.bot_user_id}> to <#{context.channel_id}> "
-                        "to make this app functional?",
+                        "text": "Parece que o usuário bot deste aplicativo não é um membro do canal especificado. "
+                        f"Você poderia, por favor, convidar <@{context.bot_user_id}> para <#{context.channel_id}> "
+                        "para que este aplicativo funcione?",
                     },
                 }
             ]
@@ -114,7 +114,7 @@ def build_summarize_option_modal(*, context: BoltContext, body: dict) -> dict:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"Something is wrong! (error: {error_code})",
+                        "text": f"Algo está errado! (erro: {error_code})",
                     },
                 }
             ]
@@ -122,9 +122,9 @@ def build_summarize_option_modal(*, context: BoltContext, body: dict) -> dict:
     view = {
         "type": "modal",
         "callback_id": "request-thread-summary",
-        "title": {"type": "plain_text", "text": "Summarize the thread"},
-        "submit": {"type": "plain_text", "text": "Summarize"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Resuma a thread"},
+        "submit": {"type": "plain_text", "text": "Resumir"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "private_metadata": json.dumps(
             {
                 "thread_ts": thread_ts,
@@ -142,8 +142,8 @@ def _build_summarize_wip_modal(section_text: str) -> dict:
     return {
         "type": "modal",
         "callback_id": "request-thread-summary",
-        "title": {"type": "plain_text", "text": "Summarize the thread"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Resuma a thread"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "blocks": [
             {
                 "type": "section",
@@ -155,13 +155,13 @@ def _build_summarize_wip_modal(section_text: str) -> dict:
 
 def build_summarize_wip_modal() -> dict:
     return _build_summarize_wip_modal(
-        "Got it! Working on the summary now ... :hourglass:"
+        "Entendi! Trabalhando no resumo agora ... :hourglass:"
     )
 
 
 def build_summarize_message_modal() -> dict:
     return _build_summarize_wip_modal(
-        "Got it! Once the summary is ready, I will post it in the thread."
+        "Entendi! Quando o resumo estiver pronto, eu o postarei na thread."
     )
 
 
@@ -169,8 +169,8 @@ def _build_summary_result_modal(section_text: str) -> dict:
     return {
         "type": "modal",
         "callback_id": "request-thread-summary",
-        "title": {"type": "plain_text", "text": "Summarize the thread"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Resuma a thread"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "blocks": [
             {
                 "type": "section",
@@ -190,8 +190,8 @@ def build_summarize_timeout_error_modal() -> dict:
 
 def build_summarize_error_modal(e: Exception) -> dict:
     return _build_summary_result_modal(
-        ":warning: *My apologies!* "
-        f"An error occurred while generating the summary of this thread: `{e}`"
+        ":warning: *Minhas desculpas!* "
+        f"Ocorreu um erro ao gerar o resumo desta thread: `{e}`"
     )
 
 
@@ -200,11 +200,11 @@ def build_summarize_error_modal(e: Exception) -> dict:
 # ----------------------------
 
 DEFAULT_HOME_TAB_MESSAGE = (
-    "To enable this app in this Slack workspace, you need to save your OpenAI API key. "
-    "Visit <https://platform.openai.com/account/api-keys|your developer page> to grap your key!"
+    "Para habilitar este aplicativo neste workspace do Slack, você precisa salvar sua chave de API da OpenAI. "
+    "Visite <https://platform.openai.com/account/api-keys|sua página de desenvolvedor> para obter sua chave!"
 )
 
-DEFAULT_HOME_TAB_CONFIGURE_LABEL = "Configure"
+DEFAULT_HOME_TAB_CONFIGURE_LABEL = "Configurar"
 
 
 def build_home_tab(
@@ -218,20 +218,20 @@ def build_home_tab(
         [
             f"* {message}",
             f"* {DEFAULT_HOME_TAB_CONFIGURE_LABEL}",
-            "* Can you proofread the following sentence without changing its meaning?",
-            "* (Start a chat from scratch)",
-            "* Start",
-            "* Chat Templates",
-            "* Configuration",
-            "* Can you generate an image as I instruct you?",
-            "* Can you generate variations for my images?",
+            "* Você pode revisar a seguinte frase sem alterar seu significado?",
+            "* (Iniciar uma conversa do zero)",
+            "* Iniciar",
+            "* Modelos de Conversa",
+            "* Configuração",
+            "* Você pode gerar uma imagem conforme eu instruir?",
+            "* Você pode gerar variações para minhas imagens?",
         ]
     )
     translated_sentences = list(
         map(
             lambda s: s.replace("* ", ""),
             filter(
-                # Consider that translation results might contain extra newlines
+                # Considere que os resultados da tradução podem conter novas linhas extras
                 lambda s: s != "",
                 translate(
                     openai_api_key=openai_api_key,
@@ -329,9 +329,9 @@ def build_home_tab(
 
 def build_configure_modal(context: BoltContext) -> dict:
     already_set_api_key = context.get("OPENAI_API_KEY")
-    api_key_text = "Save your OpenAI API key:"
-    submit = "Submit"
-    cancel = "Cancel"
+    api_key_text = "Salve sua chave de API da OpenAI:"
+    submit = "Enviar"
+    cancel = "Cancelar"
     if already_set_api_key is not None:
         api_key_text = translate(
             openai_api_key=already_set_api_key, context=context, text=api_key_text
@@ -364,7 +364,7 @@ def build_configure_modal(context: BoltContext) -> dict:
     return {
         "type": "modal",
         "callback_id": "configure",
-        "title": {"type": "plain_text", "text": "OpenAI API Key"},
+        "title": {"type": "plain_text", "text": "Chave de API da OpenAI"},
         "submit": {"type": "plain_text", "text": submit},
         "close": {"type": "plain_text", "text": cancel},
         "blocks": [
@@ -377,14 +377,14 @@ def build_configure_modal(context: BoltContext) -> dict:
                     "action_id": "input",
                     "placeholder": {
                         "type": "plain_text",
-                        "text": "Paste your API key starting with sk-...",
+                        "text": "Cole sua chave de API começando com sk-...",
                     },
                 },
             },
             {
                 "type": "input",
                 "block_id": "model",
-                "label": {"type": "plain_text", "text": "OpenAI Model"},
+                "label": {"type": "plain_text", "text": "Modelo OpenAI"},
                 "element": {
                     "type": "static_select",
                     "action_id": "input",
@@ -405,27 +405,27 @@ def build_proofreading_input_modal(prompt: str, tone_and_voice: Optional[str]) -
     tone_and_voice_options = [
         {"text": {"type": "plain_text", "text": persona}, "value": persona}
         for persona in [
-            "Friendly and humble individual in Slack",
-            "Software developer discussing issues on GitHub",
-            "Engaging yet insightful social media poster",
-            "Customer service representative handling inquiries",
-            "Marketing manager creating a product launch script",
-            "Technical writer documenting software procedures",
-            "Product manager creating a roadmap",
-            "HR manager composing a job description",
-            "Public relations officer drafting statements",
-            "Scientific researcher publicizing findings",
-            "Travel blogger sharing experiences",
-            "Speechwriter crafting a persuasive speech",
+            "Pessoa amigável e humilde no Slack",
+            "Desenvolvedor de software discutindo problemas no GitHub",
+            "Postador de mídia social envolvente e perspicaz",
+            "Representante de atendimento ao cliente lidando com consultas",
+            "Gerente de marketing criando um roteiro de lançamento de produto",
+            "Redator técnico documentando procedimentos de software",
+            "Gerente de produto criando um roadmap",
+            "Gerente de RH compondo uma descrição de trabalho",
+            "Oficial de relações públicas redigindo declarações",
+            "Pesquisador científico publicando descobertas",
+            "Blogueiro de viagens compartilhando experiências",
+            "Redator de discursos criando um discurso persuasivo",
         ]
     ]
 
     modal: dict = {
         "type": "modal",
         "callback_id": "proofread",
-        "title": {"type": "plain_text", "text": "Proofreading"},
-        "submit": {"type": "plain_text", "text": "Submit"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Revisão de Texto"},
+        "submit": {"type": "plain_text", "text": "Enviar"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "private_metadata": json.dumps({"prompt": prompt}),
         "blocks": [
             {
@@ -435,7 +435,7 @@ def build_proofreading_input_modal(prompt: str, tone_and_voice: Optional[str]) -
             {
                 "type": "input",
                 "block_id": "original_text",
-                "label": {"type": "plain_text", "text": "Your Text"},
+                "label": {"type": "plain_text", "text": "Seu Texto"},
                 "element": {
                     "type": "plain_text_input",
                     "action_id": "input",
@@ -445,7 +445,7 @@ def build_proofreading_input_modal(prompt: str, tone_and_voice: Optional[str]) -
             {
                 "type": "input",
                 "block_id": "tone_and_voice",
-                "label": {"type": "plain_text", "text": "Tone and voice"},
+                "label": {"type": "plain_text", "text": "Tom e Voz"},
                 "element": {
                     "type": "static_select",
                     "action_id": "input",
@@ -472,8 +472,8 @@ def build_proofreading_wip_modal(
     return {
         "type": "modal",
         "callback_id": "proofread",
-        "title": {"type": "plain_text", "text": "Proofreading"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Revisão de Texto"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "private_metadata": payload["private_metadata"],
         "blocks": [
             {
@@ -481,7 +481,7 @@ def build_proofreading_wip_modal(
                 "elements": [
                     {
                         "type": "mrkdwn",
-                        "text": f"Running OpenAI's *{context['OPENAI_MODEL']}* model:",
+                        "text": f"Executando o modelo *{context['OPENAI_MODEL']}* da OpenAI:",
                     },
                 ],
             },
@@ -489,7 +489,7 @@ def build_proofreading_wip_modal(
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"{text}\n\nProofreading your input now ... :hourglass:",
+                    "text": f"{text}\n\nRevisando seu texto agora ... :hourglass:",
                 },
             },
         ],
@@ -504,9 +504,9 @@ def _build_proofreading_result_modal(
     return {
         "type": "modal",
         "callback_id": "proofread-result",
-        "title": {"type": "plain_text", "text": "Proofreading"},
-        "submit": {"type": "plain_text", "text": "Try Another"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Revisão de Texto"},
+        "submit": {"type": "plain_text", "text": "Tente Outro"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "private_metadata": private_metadata,
         "blocks": blocks,
     }
@@ -538,7 +538,7 @@ def build_proofreading_result_modal(
             "elements": [
                 {
                     "type": "mrkdwn",
-                    "text": f"Provided using OpenAI's *{context['OPENAI_MODEL']}* model:",
+                    "text": f"Fornecido usando o modelo *{context['OPENAI_MODEL']}* da OpenAI:",
                 },
             ],
         },
@@ -551,7 +551,7 @@ def build_proofreading_result_modal(
         context_block = {
             "type": "context",
             "elements": [
-                {"type": "mrkdwn", "text": f"Tone and voice: {tone_and_voice}"}
+                {"type": "mrkdwn", "text": f"Tom e voz: {tone_and_voice}"}
             ],
         }
         blocks.append(context_block)
@@ -562,7 +562,7 @@ def build_proofreading_result_modal(
             "text": {"type": "mrkdwn", "text": " "},
             "accessory": {
                 "type": "button",
-                "text": {"type": "plain_text", "text": "Send this result in DM"},
+                "text": {"type": "plain_text", "text": "Enviar este resultado em DM"},
                 "value": "clicked",
                 "action_id": "send-proofread-result-in-dm",
             },
@@ -602,8 +602,8 @@ def build_proofreading_error_modal(
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"{text}\n\n:warning: *My apologies!* "
-                f"An error occurred while generating the summary of this thread: `{e}`",
+                "text": f"{text}\n\n:warning: *Minhas desculpas!* "
+                f"Ocorreu um erro ao gerar o resumo desta thread: `{e}`",
             },
         },
     ]
@@ -621,9 +621,9 @@ def build_proofreading_result_no_dm_button_modal(
     return {
         "type": "modal",
         "callback_id": "proofread-result",
-        "title": {"type": "plain_text", "text": "Proofreading"},
-        "submit": {"type": "plain_text", "text": "Try Another"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Revisão de Texto"},
+        "submit": {"type": "plain_text", "text": "Tente Outro"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "private_metadata": private_metadata,
         "blocks": blocks,
     }
@@ -641,18 +641,18 @@ def build_image_generation_input_modal(prompt: str) -> dict:
     ]
     quality_options = [
         {"text": {"type": "plain_text", "text": v}, "value": v}
-        for v in ["standard", "hd"]
+        for v in ["padrão", "hd"]
     ]
     style_options = [
         {"text": {"type": "plain_text", "text": v}, "value": v}
-        for v in ["vivid", "natural"]
+        for v in ["vívido", "natural"]
     ]
     return {
         "type": "modal",
         "callback_id": "image-generation",
-        "title": {"type": "plain_text", "text": "Image Generation"},
-        "submit": {"type": "plain_text", "text": "Submit"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Geração de Imagens"},
+        "submit": {"type": "plain_text", "text": "Enviar"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "blocks": [
             {
                 "type": "section",
@@ -672,7 +672,7 @@ def build_image_generation_input_modal(prompt: str) -> dict:
             {
                 "type": "input",
                 "block_id": "size",
-                "label": {"type": "plain_text", "text": "Size"},
+                "label": {"type": "plain_text", "text": "Tamanho"},
                 "element": {
                     "type": "static_select",
                     "options": size_options,
@@ -683,7 +683,7 @@ def build_image_generation_input_modal(prompt: str) -> dict:
             {
                 "type": "input",
                 "block_id": "quality",
-                "label": {"type": "plain_text", "text": "Quality"},
+                "label": {"type": "plain_text", "text": "Qualidade"},
                 "element": {
                     "type": "static_select",
                     "options": quality_options,
@@ -694,7 +694,7 @@ def build_image_generation_input_modal(prompt: str) -> dict:
             {
                 "type": "input",
                 "block_id": "style",
-                "label": {"type": "plain_text", "text": "Style"},
+                "label": {"type": "plain_text", "text": "Estilo"},
                 "element": {
                     "type": "static_select",
                     "options": style_options,
@@ -708,9 +708,9 @@ def build_image_generation_input_modal(prompt: str) -> dict:
 
 def build_image_generation_wip_modal() -> dict:
     return build_image_generation_text_modal(
-        "Working on this now ... :hourglass:\n\n"
-        "Once the image is ready, this app will send it to you in a DM. "
-        "If you don't want to wait here, you can close this modal at any time."
+        "Trabalhando nisso agora ... :hourglass:\n\n"
+        "Quando a imagem estiver pronta, este aplicativo enviará para você em uma DM. "
+        "Se você não quiser esperar aqui, pode fechar este modal a qualquer momento."
     )
 
 
@@ -718,8 +718,8 @@ def build_image_generation_result_modal(blocks: list) -> dict:
     return {
         "type": "modal",
         "callback_id": "image-generation",
-        "title": {"type": "plain_text", "text": "Image Generation"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Geração de Imagens"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "blocks": blocks,
     }
 
@@ -741,7 +741,7 @@ def build_image_generation_result_blocks(
         {
             "type": "image",
             "slack_file": {"url": image_url},
-            "alt_text": f"Generated by {model}",
+            "alt_text": f"Gerado por {model}",
         },
     ]
 
@@ -750,8 +750,8 @@ def build_image_generation_text_modal(section_text: str) -> dict:
     return {
         "type": "modal",
         "callback_id": "image-generation",
-        "title": {"type": "plain_text", "text": "Image Generation"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Geração de Imagens"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "blocks": [
             {
                 "type": "section",
@@ -769,9 +769,9 @@ def build_image_variations_input_modal(prompt: str) -> dict:
     return {
         "type": "modal",
         "callback_id": "image-variations",
-        "title": {"type": "plain_text", "text": "Image Variations"},
-        "submit": {"type": "plain_text", "text": "Submit"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Variações de Imagens"},
+        "submit": {"type": "plain_text", "text": "Enviar"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "blocks": [
             {
                 "type": "section",
@@ -780,7 +780,7 @@ def build_image_variations_input_modal(prompt: str) -> dict:
             {
                 "type": "input",
                 "block_id": "input_files",
-                "label": {"type": "plain_text", "text": "Files to edit"},
+                "label": {"type": "plain_text", "text": "Arquivos para editar"},
                 "element": {
                     "type": "file_input",
                     "action_id": "input",
@@ -792,7 +792,7 @@ def build_image_variations_input_modal(prompt: str) -> dict:
             {
                 "type": "input",
                 "block_id": "size",
-                "label": {"type": "plain_text", "text": "Size"},
+                "label": {"type": "plain_text", "text": "Tamanho"},
                 "element": {
                     "type": "static_select",
                     "options": size_options,
@@ -806,9 +806,9 @@ def build_image_variations_input_modal(prompt: str) -> dict:
 
 def build_image_variations_wip_modal() -> dict:
     return build_image_variations_text_modal(
-        "Working on this now ... :hourglass:\n\n"
-        "Once the images are ready, this app will send them to you in a DM. "
-        "If you don't want to wait here, you can close this modal at any time."
+        "Trabalhando nisso agora ... :hourglass:\n\n"
+        "Quando as imagens estiverem prontas, este aplicativo as enviará para você em uma DM. "
+        "Se você não quiser esperar aqui, pode fechar este modal a qualquer momento."
     )
 
 
@@ -816,8 +816,8 @@ def build_image_variations_result_modal(blocks: list) -> dict:
     return {
         "type": "modal",
         "callback_id": "image-variations",
-        "title": {"type": "plain_text", "text": "Image Variations"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "title": {"type": "plain_text", "text": "Variações de Imagens"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "blocks": blocks,
     }
 
@@ -842,7 +842,7 @@ def build_image_variations_result_blocks(
             {
                 "type": "image",
                 "slack_file": {"url": url},
-                "alt_text": f"Generated by {model}",
+                "alt_text": f"Gerado por {model}",
             }
         )
     return blocks
@@ -851,9 +851,9 @@ def build_image_variations_result_blocks(
 def build_image_variations_text_modal(section_text: str) -> dict:
     return {
         "type": "modal",
-        "callback_id": "image_variations",
-        "title": {"type": "plain_text", "text": "Image Variations"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "callback_id": "image-variations",
+        "title": {"type": "plain_text", "text": "Variações de Imagens"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "blocks": [
             {
                 "type": "section",
@@ -873,8 +873,8 @@ def build_from_scratch_modal() -> dict:
         "type": "modal",
         "callback_id": "chat-from-scratch",
         "title": {"type": "plain_text", "text": "ChatGPT"},
-        "submit": {"type": "plain_text", "text": "Submit"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "submit": {"type": "plain_text", "text": "Enviar"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "blocks": [
             {
                 "type": "input",
@@ -895,7 +895,7 @@ def _build_from_scratch_modal(section_text: str) -> dict:
         "type": "modal",
         "callback_id": "chat-from-scratch",
         "title": {"type": "plain_text", "text": "ChatGPT"},
-        "close": {"type": "plain_text", "text": "Close"},
+        "close": {"type": "plain_text", "text": "Fechar"},
         "blocks": [
             {
                 "type": "section",
@@ -906,7 +906,7 @@ def _build_from_scratch_modal(section_text: str) -> dict:
 
 
 def build_from_scratch_wip_modal(text: str) -> dict:
-    return _build_from_scratch_modal(f"{text}\n\nWorking on this now ... :hourglass:")
+    return _build_from_scratch_modal(f"{text}\n\nTrabalhando nisso agora ... :hourglass:")
 
 
 def build_from_scratch_result_modal(
@@ -923,6 +923,6 @@ def build_from_scratch_timeout_modal(text: str) -> dict:
 
 def build_from_scratch_error_modal(*, text: str, e: Exception) -> dict:
     return _build_from_scratch_modal(
-        f"{text}\n\n:warning: *My apologies!* "
-        f"An error occurred while generating the summary of this thread: `{e}`"
+        f"{text}\n\n:warning: *Minhas desculpas!* "
+        f"Ocorreu um erro ao gerar o resumo desta thread: `{e}`"
     )

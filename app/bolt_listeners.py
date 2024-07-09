@@ -116,7 +116,7 @@ def respond_to_app_mention(
         if openai_api_key is None:
             client.chat_postMessage(
                 channel=context.channel_id,
-                text="To use this app, please configure your OpenAI API key first",
+                text="Para usar este aplicativo, por favor configure sua chave de API da OpenAI primeiro",
             )
             return
 
@@ -202,7 +202,7 @@ def respond_to_app_mention(
                 client=client,
                 channel=context.channel_id,
                 ts=wip_reply["message"]["ts"],
-                text=f":warning: The previous message is too long ({num_context_tokens}/{max_context_tokens} prompt tokens).",
+                text=f":warning: A mensagem anterior é muito longa ({num_context_tokens}/{max_context_tokens} tokens de prompt).",
                 messages=messages,
                 user=context.user_id,
             )
@@ -262,7 +262,7 @@ def respond_to_app_mention(
             + translate(
                 openai_api_key=openai_api_key,
                 context=context,
-                text=f":warning: Failed to start a conversation with ChatGPT: {e}",
+                text=f":warning: Falha ao iniciar uma conversa com o ChatGPT: {e}",
             )
         )
         logger.exception(text, e)
@@ -441,7 +441,7 @@ def respond_to_new_message(
                 client=client,
                 channel=context.channel_id,
                 ts=wip_reply["message"]["ts"],
-                text=f":warning: The previous message is too long ({num_context_tokens}/{max_context_tokens} prompt tokens).",
+                text=f":warning: A mensagem anterior é muito longa ({num_context_tokens}/{max_context_tokens} tokens de prompt).",
                 messages=messages,
                 user=context.user_id,
             )
@@ -516,7 +516,7 @@ def respond_to_new_message(
                 else ""
             )
             + "\n\n"
-            + f":warning: Failed to reply: {e}"
+            + f":warning: Falha ao responder: {e}"
         )
         logger.exception(text, e)
         if wip_reply is not None:
@@ -584,7 +584,7 @@ def prepare_and_share_thread_summary(
         here_is_summary = translate(
             openai_api_key=openai_api_key,
             context=context,
-            text="Here is the summary:",
+            text="Aqui está o resumo:",
         )
         summary = generate_slack_thread_summary(
             context=context,
@@ -615,7 +615,7 @@ def prepare_and_share_thread_summary(
             view=build_summarize_timeout_error_modal(),
         )
     except Exception as e:
-        logger.exception(f"Failed to share a thread summary: {e}")
+        logger.exception(f"Falha ao compartilhar o resumo da thread: {e}")
         client.views_update(
             view_id=payload["id"],
             view=build_summarize_error_modal(e),
@@ -687,7 +687,7 @@ def display_proofreading_result(
             view=build_proofreading_timeout_error_modal(payload=payload, text=text),
         )
     except Exception as e:
-        logger.exception(f"Failed to share a proofreading result: {e}")
+        logger.exception(f"Falha ao compartilhar o resultado da revisão: {e}")
         client.views_update(
             view_id=payload["id"],
             view=build_proofreading_error_modal(payload=payload, text=text, e=e),
@@ -719,7 +719,7 @@ def send_proofreading_result_in_dm(
         if result is not None:
             client.chat_postMessage(
                 channel=context.actor_user_id,
-                text=":wave: Here is the proofreading result:\n" + result,
+                text=":wave: Aqui está o resultado da revisão:\n" + result,
             )
             # Remove the last block that displays the button
             view_blocks.pop((len(view_blocks) - 1))
@@ -731,7 +731,7 @@ def send_proofreading_result_in_dm(
                 ),
             )
     except Exception as e:
-        logger.exception(f"Failed to send a DM: {e}")
+        logger.exception(f"Falha ao enviar uma DM: {e}")
 
 
 #
@@ -789,15 +789,15 @@ def display_image_generation_result(
         dm_id = client.conversations_open(users=users)["channel"]["id"]
         text = "\n".join(map(lambda s: f">{s}", prompt.split("\n")))
         message_text = (
-            "Here's a new image generated using this prompt:\n"
+            "Aqui está uma nova imagem gerada usando este prompt:\n"
             f"{text}\n"
-            f"model: {model}, size: {size}, quality: {quality}, style: {style}, time spent: {spent_seconds} s"
+            f"modelo: {model}, tamanho: {size}, qualidade: {quality}, estilo: {style}, tempo gasto: {spent_seconds} s"
         )
         upload = client.files_upload_v2(
             filename="generated_image.png",
             file=image_content,
-            alt_txt=f"Generated using {model}",
-            title=f"Generated using {model}",
+            alt_txt=f"Gerado usando {model}",
+            title=f"Gerado usando {model}",
             initial_comment=message_text,
             channel=dm_id,
         )
@@ -830,19 +830,19 @@ def display_image_generation_result(
             view=build_image_generation_text_modal(TIMEOUT_ERROR_MESSAGE),
         )
     except SlackApiError as e:
-        logger.exception(f"Failed to call Slack APIs for image generation: {e}")
+        logger.exception(f"Falha ao chamar as APIs do Slack para geração de imagens: {e}")
         client.views_update(
             view_id=payload["id"],
             view=build_image_generation_text_modal(
-                f"{text}\n\n:warning: *My apologies!* "
-                f"An error occurred while calling Slack APIs: `{e}`"
+                f"{text}\n\n:warning: *Minhas desculpas!* "
+                f"Ocorreu um erro ao chamar as APIs do Slack: `{e}`"
             ),
         )
     except Exception as e:
-        logger.exception(f"Failed to share a generated image: {e}")
+        logger.exception(f"Falha ao compartilhar uma imagem gerada: {e}")
         error = (
-            f"{text}\n\n:warning: *My apologies!* "
-            f"An error occurred while generating an image: `{e}`"
+            f"{text}\n\n:warning: *Minhas desculpas!* "
+            f"Ocorreu um erro ao gerar uma imagem: `{e}`"
         )
         client.chat_postMessage(
             channel=context.actor_user_id,
@@ -917,11 +917,11 @@ def display_image_variations_result(
         spent_seconds = str(round((time.time() - start_time), 2))
 
         if len(file_uploads) == 0:
-            logger.error("Failed to prepare any upload content")
+            logger.error("Falha ao preparar qualquer conteúdo de upload")
             client.views_update(
                 view_id=payload["id"],
                 view=build_image_variations_text_modal(
-                    "Failed to generate variations. Please check your OpenAI platform usage."
+                    "Falha ao gerar variações. Por favor, verifique o uso da sua plataforma OpenAI."
                 ),
             )
             return
@@ -929,8 +929,8 @@ def display_image_variations_result(
         users = [context.actor_user_id]
         dm_id = client.conversations_open(users=users)["channel"]["id"]
         message_text = (
-            "Here are the generated image variations for your inputs:\n"
-            f"model: {model}, size: {size}, time spent: {spent_seconds} s"
+            "Aqui estão as variações de imagem geradas para suas entradas:\n"
+            f"modelo: {model}, tamanho: {size}, tempo gasto: {spent_seconds} s"
         )
         upload = client.files_upload_v2(
             initial_comment=message_text,
@@ -968,19 +968,19 @@ def display_image_variations_result(
             view=build_image_variations_text_modal(TIMEOUT_ERROR_MESSAGE),
         )
     except SlackApiError as e:
-        logger.exception(f"Failed to call Slack APIs for image variations: {e}")
+        logger.exception(f"Falha ao chamar as APIs do Slack para variações de imagens: {e}")
         client.views_update(
             view_id=payload["id"],
             view=build_image_variations_text_modal(
-                f":warning: *My apologies!* "
-                f"An error occurred while calling Slack APIs: `{e}`"
+                f":warning: *Minhas desculpas!* "
+                f"Ocorreu um erro ao chamar as APIs do Slack: `{e}`"
             ),
         )
     except Exception as e:
-        logger.exception(f"Failed to share a generated image: {e}")
+        logger.exception(f"Falha ao compartilhar uma imagem gerada: {e}")
         error = (
-            f"\n\n:warning: *My apologies!* "
-            f"An error occurred while generating image variations: `{e}`"
+            f"\n\n:warning: *Minhas desculpas!* "
+            f"Ocorreu um erro ao gerar variações de imagem: `{e}`"
         )
         client.chat_postMessage(
             channel=context.actor_user_id,
@@ -1040,7 +1040,7 @@ def display_chat_from_scratch_result(
             view=build_from_scratch_timeout_modal(text),
         )
     except Exception as e:
-        logger.exception(f"Failed to share a thread summary: {e}")
+        logger.exception(f"Falha ao compartilhar o resumo da thread: {e}")
         client.views_update(
             view_id=payload["id"],
             view=build_from_scratch_error_modal(text=text, e=e),
