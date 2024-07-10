@@ -529,12 +529,12 @@ def generate_slack_thread_summary(
         {
             "role": "system",
             "content": (
-                "You're an assistant tasked with helping Slack users by summarizing threads. "
-                "You'll receive a collection of replies in this format: <@user_id>: reply text\n"
-                "Your role is to provide a concise summary that highlights key facts and decisions. "
-                "If the first line of a user's request is in a non-English language, "
-                "please summarize in that same language. "
-                "Lastly, please prioritize speed of generation over perfection."
+                "Você é um assistente encarregado de ajudar os usuários do Slack a resumir conversas em tópicos. "
+                "Você receberá uma coleção de respostas neste formato: <@user_id>: texto da resposta\n"
+                "Seu papel é fornecer um resumo conciso que destaque os fatos e decisões principais. "
+                "Se a primeira linha da solicitação de um usuário estiver em um idioma que não seja o inglês, "
+                "por favor, resuma nesse mesmo idioma. "
+                "Por fim, priorize a velocidade de geração em vez da perfeição."
             ),
         },
         {
@@ -571,15 +571,15 @@ def generate_proofreading_result(
     timeout_seconds: int,
 ) -> str:
     system_content = (
-        "You're an assistant tasked with helping Slack users by proofreading a given text. "
-        "Your task is to enhance the quality of the sentences provided "
-        "without altering their original meaning as far as possible. "
+        "Você é um assistente encarregado de ajudar os usuários do Slack a revisar um texto fornecido. "
+        "Sua tarefa é melhorar a qualidade das frases fornecidas "
+        "sem alterar seu significado original tanto quanto possível. "
     )
     if tone_and_voice is not None:
         system_content += (
-            f"The generated output must be a suitable one for {tone_and_voice}. "
+            f"O resultado gerado deve ser adequado para {tone_and_voice}. "
         )
-    system_content += "Lastly, generating results swiftly should be prioritized over achieving perfection."
+    system_content += "Por fim, priorize a geração rápida de resultados em vez de alcançar a perfeição."
 
     messages = [
         {
@@ -588,11 +588,11 @@ def generate_proofreading_result(
         },
         {
             "role": "user",
-            "content": "Please proofread my written work, which starts after '!!!' "
-            "I'll provide a text input which might be in a non-English language. "
-            "Ensure that the proofread result is in the same language. "
-            "Even if you consider annotating the proofread text, kindly withhold it. "
-            f"Here is the input !!!\n{original_text}",
+            "content": "Por favor, revise meu trabalho escrito, que começa após '!!!' "
+            "Fornecerei uma entrada de texto que pode estar em um idioma que não seja o inglês. "
+            "Certifique-se de que o resultado da revisão esteja no mesmo idioma. "
+            "Mesmo se você considerar anotar o texto revisado, gentilmente retenha isso. "
+            f"Aqui está a entrada !!!\n{original_text}",
         },
     ]
     start_time = time.time()
@@ -626,10 +626,10 @@ def generate_chatgpt_response(
         {
             "role": "system",
             "content": (
-                "You're an assistant tasked with helping Slack users by responding to a given prompt. "
-                "If the first line of a user's request is in a non-English language, "
-                "please provide its result in that same language. "
-                "Lastly, please prioritize speed of generation over perfection."
+                "Você é um assistente encarregado de ajudar os usuários do Slack respondendo a um prompt fornecido. "
+                "Se a primeira linha da solicitação de um usuário estiver em um idioma que não seja o inglês, "
+                "por favor, forneça o resultado nesse mesmo idioma. "
+                "Por fim, priorize a velocidade de geração em vez da perfeição."
             ),
         },
         {"role": "user", "content": prompt},
